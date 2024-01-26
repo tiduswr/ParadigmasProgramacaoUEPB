@@ -1,0 +1,38 @@
+# SWI-Prolog
+*.qlf
+*.qsave
+*.qsave~
+*.stacktrace
+
+# SICStus Prolog
+*.dep
+*.qlf
+*.qsave
+*.bak
+*.dSYM/
+
+# YAP Prolog
+*.asr
+*.o
+*.so
+*.dll
+*.dylib
+
+# Ciao Prolog
+*-ciaopp
+*-wam
+*.dep
+*.po
+*.asr
+*.a
+
+# Binaries
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Editor/IDE specific files
+*~
+.vscode/

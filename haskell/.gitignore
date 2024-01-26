@@ -1,0 +1,25 @@
+# Haskell
+dist/
+cabal-dev/
+*.o
+*.hi
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+*.prof
+*.aux
+*.hp
+*.eventlog
+*.hie
+.stack-work/
+.hpc/
+cabal.project.local
+cabal.project.local~
+
+# Editor/IDE specific files
+*~
+.idea/
+.vscode/
+*.swp
+*.swo
