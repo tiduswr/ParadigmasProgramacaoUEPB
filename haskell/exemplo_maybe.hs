@@ -1,4 +1,3 @@
--- Monads funcionam como Optionals do Java
 safeDivide :: Integer -> Integer -> Maybe Integer
 safeDivide _ 0 = Nothing
 -- É possível alterar a ordem div x y para x div y usando crases:
