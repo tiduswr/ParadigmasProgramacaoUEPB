@@ -4,9 +4,9 @@ import Data.Maybe (fromMaybe)
 -- minhaLista !! índice
 
 -- head = index 0 da lista e tail = [...] - head
-comp :: [Int] -> Int
-comp [] = 0
-comp (_:t) = 1 + comp t 
+comprimento :: [Int] -> Int
+comprimento [] = 0
+comprimento (_:t) = 1 + comprimento t
 
 soma :: [Int] -> Int
 soma [] = 0
@@ -15,19 +15,34 @@ soma (h:t) = h + soma t
 possuiChar :: [Char] -> Char -> Bool
 possuiChar [] ch = False
 possuiChar (h:t) ch | h == ch = True
-                  | otherwise = possuiChar t ch
+                    | otherwise = possuiChar t ch
 
-maior :: [Int] -> Maybe Int
-maior [] = Nothing
-maior (h:t) = Just $ if h >= maiorCauda then h else maiorCauda
+maior :: [Int] -> Int
+maior [] = -1
+maior (h:t) = if h >= maiorCauda then h else maiorCauda
     where
-        maiorCauda = fromMaybe h (maior t)
+        maiorCauda = maior t
+
+menor :: [Int] -> Int
+menor [] = maxBound
+menor (h:t) = if h <= menorCauda then h else menorCauda
+    where
+        menorCauda = menor t
 
 multiplos :: Int -> [Int]
 multiplos n = [n*x | x <- [1..10]]
 
+type PrimoEntry = (Int, Bool)
+
 ehPrimo :: Int -> Bool
 ehPrimo n = length [x | x <- [1..n], n `mod` x == 0] == 2
+
+ehPrimoList :: [Int] -> [PrimoEntry]
+ehPrimoList [] = []
+ehPrimoList (h:t) = (h, (ehPrimo h)):ehPrimoList(t)
+
+ehPrimoListOtimizada :: [Int] -> [PrimoEntry]
+ehPrimoListOtimizada = map (\ h -> (h, ehPrimo h))
 
 insertFirst :: [Int] -> Int -> [Int]
 insertFirst lista x = x:lista
