@@ -70,11 +70,11 @@ public class Login extends JDialog {
 
         if (usuario.equals("admin") && senha.equals("123")) {
             JOptionPane.showMessageDialog(Login.this, "Login bem-sucedido!");
+            dispose();
         } else {
             JOptionPane.showMessageDialog(Login.this, "Credenciais inválidas. Tente novamente.");
         }
 
-        dispose();
     }
 
 }
