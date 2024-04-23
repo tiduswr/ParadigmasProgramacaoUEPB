@@ -1,3 +1,18 @@
+## Uso no linux:
+```shell
+# ; para todas as possibilidades
+swipl -s caminho.ps
+
+shell(comand)
+
+trace # / notrace / nodebug
+
+halt. #sair
+
+consult('file.pl'). #carregar arquivo
+
+```
+
 ## Exemplo Introdutório:
 ```prolog
 fala(maria, espanhol).
@@ -6,7 +21,7 @@ fala(joao, espanhol).
 fala(jose, ingles).
 fala(jambo, ingles).
 
-conversa(X, Y) :- fala(X, L), fala(Y, L), X \= Y.
+conversa(P1, P2) :- fala(P1, L), fala(P2, L), P1 \= P2.
 ```
 
 ## Exemplo Operador corte:
@@ -21,9 +36,21 @@ aprende(mario, prolog).
 aprende(jose, algoritmos).
 aprende(mandela, algoritmos).
 
-aluno1(X, Y, A) :- ensina(X, A), aprende(Y, A).
+aluno1(PROFESSOR, ALUNO, DISCIPLINA) :- ensina(PROFESSOR, DISCIPLINA), aprende(ALUNO, DISCIPLINA).
 
-aluno2(X, Y, A) :- ensina(X, A), !, aprende(Y, A).
+aluno2(PROFESSOR, ALUNO, DISCIPLINA) :- ensina(PROFESSOR, DISCIPLINA), !, aprende(ALUNO, DISCIPLINA).
+```
+## Operadores Lógicos
+```
+X > Y  | X é maior do que Y
+X < Y  | X é menor do que Y 
+X >= Y | X é maior ou igual a Y
+X =< Y | X é menor ou igual a Y 
+X == Y | X é igual a Y
+X = Y  | X unifica com Y 
+X \= Y | X é diferente de Y
+\+ X   | X é negado 
+not(X) | X é negado
 ```
 
 ## Exemplo Negação:
@@ -37,6 +64,17 @@ idade(marcelo, 72).
 jovem(Pessoa) :-
     idade(Pessoa, Idade),
     not(Idade >= 50).
+```
+## Operadores Aritméticos
+```
++   | adição
+-   | subtração
+*   | multiplicação
+/   | divisão
+//  | divisão inteira
+mod | resto divisão inteira |
+**  | potência
+is  | atribuição
 ```
 
 ## Exemplo Aritmética 1 com funcao Write:
