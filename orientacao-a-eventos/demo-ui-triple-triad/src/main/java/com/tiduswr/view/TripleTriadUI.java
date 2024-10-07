@@ -12,9 +12,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.tiduswr.controller.SoundController;
 import com.tiduswr.model.CardData;
 import com.tiduswr.model.Player;
+import com.tiduswr.model.SoundService;
 
 public class TripleTriadUI extends JFrame {
     
@@ -23,15 +23,16 @@ public class TripleTriadUI extends JFrame {
     private PlayerCards p1, p2;
     private final int glW, glH, plW, plH;
     private final Dimension SCREEN_SIZE = new Dimension(800, 700);
-    private final SoundController soundController;
+    private final SoundService soundService;
 
-    public TripleTriadUI(List<CardData> cards) throws IOException {
+    public TripleTriadUI(List<CardData> cards, SoundService soundServiceInjection) throws IOException {
+        this.soundService = soundServiceInjection;
+
         // Toador de fitas :)
-        soundController = new SoundController("theme.wav");
         addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosing(WindowEvent e) {
-                soundController.stop();
+                soundService.stop();
             }
         });
 
@@ -90,8 +91,7 @@ public class TripleTriadUI extends JFrame {
 
         // Configurações de janela
         setLocationRelativeTo(null);
-        soundController.loop();
-        soundController.play();
+        soundService.playWithLoop(56200, -1);
         setVisible(true);
     }
 
