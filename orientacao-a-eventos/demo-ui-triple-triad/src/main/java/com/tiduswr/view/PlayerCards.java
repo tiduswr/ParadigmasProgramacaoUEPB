@@ -55,6 +55,14 @@ public class PlayerCards extends JPanel {
         });
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        for(var componente : getComponents()){
+            componente.setEnabled(enabled);
+        }
+    }
+
     private void updateBorders() {
         for (int i = 0; i < handSize; i++) {
             var cardComponent = (CardComponent) getComponent(i);

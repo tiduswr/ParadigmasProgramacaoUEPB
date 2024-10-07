@@ -68,19 +68,20 @@ public class TripleTriadUI extends JFrame {
         boardWrapper.add(board, BorderLayout.CENTER);
 
         // Pode ser visto outra forma de pegar esses dados
-        p1 = new PlayerCards(this, new Player("Harllem", cards.subList(0, 5), Color.decode("#08C2FF")), plW, plH);
-        p2 = new PlayerCards(this, new Player("Neto", cards.subList(5, 10), Color.decode("#C96868")), plW, plH);
+        p1 = new PlayerCards(this, new Player("José", cards.subList(0, 5), Color.decode("#08C2FF")), plW, plH);
+        p2 = new PlayerCards(this, new Player("Maria", cards.subList(5, 10), Color.decode("#C96868")), plW, plH);
+        p2.setEnabled(false); // Você pode inativar uma das mãos do jogador assim
 
         // Só pra testes
-        addExampleCardToBoard(cards, Color.decode("#fa6469"));
+        exemploDeCartasNoCampo(cards, Color.decode("#fa6469"));
 
         // log do jogo
         gameLog.setPreferredSize(new Dimension(glW, glH));
         
         // Adiciona os componentes ao layout
-        boardWrapper.setBorder(BorderFactory.createTitledBorder("Board"));
-        p1.setBorder(BorderFactory.createTitledBorder("Jogador 1"));
-        p2.setBorder(BorderFactory.createTitledBorder("Jogador 2"));
+        boardWrapper.setBorder(BorderFactory.createTitledBorder("Campo"));
+        p1.setBorder(BorderFactory.createTitledBorder(p1.getPlayer().getName()));
+        p2.setBorder(BorderFactory.createTitledBorder(p2.getPlayer().getName()));
         gameLog.setBorder(BorderFactory.createTitledBorder("Log de Jogadas"));
         add(boardWrapper, BorderLayout.CENTER);
         add(p1, BorderLayout.WEST);
@@ -94,8 +95,8 @@ public class TripleTriadUI extends JFrame {
         setVisible(true);
     }
 
-    private void addExampleCardToBoard(List<CardData> cards, Color color) {
-        final var cardData = cards.get(10);
+    private void exemploDeCartasNoCampo(List<CardData> cards, Color color) {
+        final var cardData = cards.get(0);
         cardData.setOwner(p1.getPlayer());
         var cardComponent = new CardComponent(cardData, e -> {
             gameLog.addLogMessage(String.format("A carta '%s' foi selecionada!", cardData.getName()));
