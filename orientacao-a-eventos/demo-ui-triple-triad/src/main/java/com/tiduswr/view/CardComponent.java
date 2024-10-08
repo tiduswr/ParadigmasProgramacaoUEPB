@@ -89,17 +89,15 @@ public class CardComponent extends JButton {
             var w = getWidth() - 2 * OFFSET;
             var h = getHeight() - 2 * OFFSET;
             g2d.drawImage(backCard, OFFSET, OFFSET, w-COMPENSATION*2, h-COMPENSATION*2, this);
-            drawSelection(g2d);
-
         } else {
-            drawSelection(g2d);
-
             // Desenha o ícone de seleção no canto inferior esquerdo se o card estiver selecionado
             if (cardIsSelected) {
                 g2d.drawImage(selectedIcon, OFFSET, getHeight() - 32 - OFFSET, 40, 25, this);
             }
             
             if (info != null) drawCardValues(g2d);
+
+            drawSelection(g2d);
         }
 
         g2d.dispose();
