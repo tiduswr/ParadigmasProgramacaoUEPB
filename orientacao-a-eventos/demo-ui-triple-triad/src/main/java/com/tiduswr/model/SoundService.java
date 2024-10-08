@@ -18,17 +18,15 @@ public class SoundService {
     private int loopStartFrame;
     private int loopEndFrame;
 
-    // Construtor original
     public SoundService(String path, int poolSize) {
         this.path = path;
         this.poolSize = poolSize;
         initializeClipPool();
     }
 
-    // Novo construtor com controle de volume
     public SoundService(String path, int poolSize, float volume) {
-        this(path, poolSize); // Chama o construtor original
-        setVolume(volume);    // Define o volume
+        this(path, poolSize);
+        setVolume(volume);
     }
 
     private void initializeClipPool() {
@@ -47,7 +45,7 @@ public class SoundService {
     }
 
     public void play() {
-        Clip clip = getAvailableClip();  // Pega um Clip disponível
+        Clip clip = getAvailableClip();
         if (clip != null) {
             clip.stop();
             clip.setFramePosition(0);  // Reinicia do início
@@ -56,14 +54,14 @@ public class SoundService {
     }
 
     public SoundService playWithLoop(int loopStartMillis, int loopEndMillis) {
-        Clip clip = getAvailableClip();  // Pega um Clip disponível para o loop
+        Clip clip = getAvailableClip();
         if (clip != null) {
             loopStartFrame = millisToFrames(loopStartMillis, clip);
             loopEndFrame = loopEndMillis > 0 ? millisToFrames(loopEndMillis, clip) : -1;  // Se -1, repete até o fim
 
             clip.setLoopPoints(loopStartFrame, loopEndFrame);
             clip.setFramePosition(0);  // Começa do início
-            clip.start();              // Toca o som desde o início
+            clip.start();
 
             // Inicia o loop contínuo a partir do ponto definido
             clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -78,11 +76,11 @@ public class SoundService {
 
     private Clip getAvailableClip() {
         for (Clip clip : clipPool) {
-            if (!clip.isRunning()) {  // Encontra um clip que não está tocando
+            if (!clip.isRunning()) {
                 return clip;
             }
         }
-        return null;  // Todos os clips estão ocupados
+        return null;
     }
 
     public void stop() {
@@ -92,13 +90,12 @@ public class SoundService {
     }
 
     public void setVolume(float volume) {
-        // Define o volume de todos os clips na pool
         for (Clip clip : clipPool) {
             if (clip.isOpen()) {
                 FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
                 // Converte o volume de 0.0 (silêncio) a 1.0 (máximo) para o valor decibel apropriado
                 float dB = (float) (20 * Math.log10(volume));
-                gainControl.setValue(dB); // Ajusta o volume
+                gainControl.setValue(dB);
             }
         }
     }
