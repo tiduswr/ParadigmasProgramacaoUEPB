@@ -12,13 +12,14 @@ public class GameController {
     
     public void createWindow(){
         var cards = CardsReader.readCardsFromCSV(); // Carrega cartas
-        var soundService = new SoundService("theme.wav"); // Carrega musica tema
+        var themeSongService = new SoundService("theme.wav", 1, 0.5f); // Carrega musica tema
+        var selectionSongService = new SoundService("selection.wav", 10); // Carrega efeito de seleção
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 try {
-                    new TripleTriadUI(cards, soundService);
+                    new TripleTriadUI(cards, themeSongService, selectionSongService);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -27,16 +27,17 @@ public class TripleTriadUI extends JFrame {
     private PlayerCards p1, p2;
     private final int glW, glH, plW, plH;
     private final Dimension SCREEN_SIZE = new Dimension(800, 700);
-    private final SoundService soundService;
+    private SoundService themeSoundService, selectionSoundService;
 
-    public TripleTriadUI(List<CardData> cards, SoundService soundServiceInjection) throws IOException {
-        this.soundService = soundServiceInjection;
+    public TripleTriadUI(List<CardData> cards, SoundService themeSoundServiceInjection, SoundService selectionSoundServiceInjection) throws IOException {
+        this.themeSoundService = themeSoundServiceInjection;
+        this.selectionSoundService = selectionSoundServiceInjection;
 
-        // Toador de fitas :)
+        // Tocador de fitas :)
         addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosing(WindowEvent e) {
-                soundService.stop();
+                themeSoundService.stop();
             }
         });
 
@@ -70,6 +71,10 @@ public class TripleTriadUI extends JFrame {
         board.addPositionListener( (row, col) -> {
             gameLog.addLogMessage("A posição " + String.format("[%d, %d]", row, col) + " foi selecionada!");
         });
+        // Exemplo de adição de efeito sonoro ao clicar
+        board.addPositionListener( (row, col) -> {
+            selectionSoundService.play();
+        });
         boardWrapper.add(board, BorderLayout.CENTER);
 
         // Pode ser visto outra forma de pegar esses dados
@@ -96,7 +101,7 @@ public class TripleTriadUI extends JFrame {
 
         // Configurações de janela
         setLocationRelativeTo(null);
-        soundService.playWithLoop(56200, -1);
+        themeSoundService.playWithLoop(56200, -1);
         setVisible(true);
     }
 

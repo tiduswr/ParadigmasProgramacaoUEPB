@@ -42,6 +42,7 @@ public class PlayerCards extends JPanel {
                     return;
 
                 father.getGameLog().addLogMessage(String.format("A carta '%s' foi selecionada!", cardData.getName()));
+                father.getSelectionSoundService().play();
                 selectedIndex = player.getCards().indexOf(cardData);
                 updateBorders();
             });

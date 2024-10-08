@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -23,9 +24,11 @@ public class CardComponent extends JButton {
     private boolean cardIsSelected;
     private static final BufferedImage selectedIcon = CardsReader.selectionIcon();
     private static final BufferedImage backCard = CardsReader.cardBack();
-    private static final Color SELECTION_COLOR = Color.decode("#347928");
     private final int OFFSET;
     private final int COMPENSATION;
+
+    private int clickX = -1;
+    private int clickY = -1;
 
     public CardComponent(PlayerCardData info, ActionListener listener) {
         OFFSET = 0;
@@ -37,6 +40,15 @@ public class CardComponent extends JButton {
         setOpaque(false);
         setContentAreaFilled(false);
         setBorderPainted(false);
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                clickX = e.getX();
+                clickY = e.getY();
+                repaint();
+            }
+        });
     }
 
     public CardComponent(PlayerCardData info, ActionListener listener, int offset) {
@@ -49,6 +61,15 @@ public class CardComponent extends JButton {
         setOpaque(false);
         setContentAreaFilled(false);
         setBorderPainted(false);
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                clickX = e.getX();
+                clickY = e.getY();
+                repaint();
+            }
+        });
     }
 
     @Override
@@ -123,13 +144,11 @@ public class CardComponent extends JButton {
     }
 
     private void drawSelection(Graphics2D g2d){
-        Color selectionColor = SELECTION_COLOR;
         if (getModel().isPressed()) {
-            g2d.setColor(new Color(selectionColor.getRed(), selectionColor.getGreen(), selectionColor.getBlue(), 150));
-        } else {
-            g2d.setColor(new Color(255, 255, 255, 0));
+            if (clickX >= 0 && clickY >= 0) {
+                g2d.drawImage(selectedIcon, clickX - 40, clickY - 10, 40, 25, this);
+            }
         }
-        g2d.fillRect(OFFSET, OFFSET, getWidth() - 2 * OFFSET, getHeight() - 2 * OFFSET);
     }
 
     private void drawCardValues(Graphics g) {
