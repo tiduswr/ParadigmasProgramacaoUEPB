@@ -15,7 +15,6 @@ public class CardData {
     private int down; 
     private int left;
     private int right;
-    private Player owner;
     private String Type;
     private BufferedImage typeIcon;
     

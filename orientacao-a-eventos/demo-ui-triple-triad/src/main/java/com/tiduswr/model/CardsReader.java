@@ -10,6 +10,15 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class CardsReader {
+
+    public static BufferedImage cardBack(){
+        try{
+            return ImageIO.read(CardsReader.class.getClassLoader().getResourceAsStream("cards/back.png"));
+        }catch(IOException e){
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
+    } 
+
     public static BufferedImage selectionIcon(){
         try{
             return ImageIO.read(CardsReader.class.getClassLoader().getResourceAsStream("hand.png"));

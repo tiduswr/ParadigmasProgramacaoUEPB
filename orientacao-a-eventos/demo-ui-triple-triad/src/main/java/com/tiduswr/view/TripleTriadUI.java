@@ -14,8 +14,12 @@ import javax.swing.JPanel;
 
 import com.tiduswr.model.CardData;
 import com.tiduswr.model.Player;
+import com.tiduswr.model.PlayerCardData;
 import com.tiduswr.model.SoundService;
 
+import lombok.Getter;
+
+@Getter
 public class TripleTriadUI extends JFrame {
     
     private Board board;
@@ -60,8 +64,8 @@ public class TripleTriadUI extends JFrame {
         // Wrapper para o campo
         JPanel boardWrapper = new JPanel(new BorderLayout());
         board = new Board("/back.png", cards);
-        board.addCardAddedListener( e -> {
-            gameLog.addLogMessage("A carta '" + e.getCard().getInfo().getName() + "' foi inserida!");
+        board.addCardAddedListener(e -> {
+            gameLog.addLogMessage("A carta '" + e.getCard().getInfo().getCardData().getName() + "' foi inserida!");
         });
         board.addPositionListener( (row, col) -> {
             gameLog.addLogMessage("A posição " + String.format("[%d, %d]", row, col) + " foi selecionada!");
@@ -71,7 +75,10 @@ public class TripleTriadUI extends JFrame {
         // Pode ser visto outra forma de pegar esses dados
         p1 = new PlayerCards(this, new Player("José", cards.subList(0, 5), Color.decode("#08C2FF")), plW, plH);
         p2 = new PlayerCards(this, new Player("Maria", cards.subList(5, 10), Color.decode("#C96868")), plW, plH);
-        p2.setEnabled(false); // Você pode inativar uma das mãos do jogador assim
+        p2.setCardsActive(false); // Você pode inativar uma mão de um jogador assim
+        p2.processAllPlayerCardData((indice, carta) -> {
+            carta.setFlipped(true); // Como você pode esconder cartas da mão do usuário
+        });
 
         // Só pra testes
         exemploDeCartasNoCampo(cards, Color.decode("#fa6469"));
@@ -81,8 +88,6 @@ public class TripleTriadUI extends JFrame {
         
         // Adiciona os componentes ao layout
         boardWrapper.setBorder(BorderFactory.createTitledBorder("Campo"));
-        p1.setBorder(BorderFactory.createTitledBorder(p1.getPlayer().getName()));
-        p2.setBorder(BorderFactory.createTitledBorder(p2.getPlayer().getName()));
         gameLog.setBorder(BorderFactory.createTitledBorder("Log de Jogadas"));
         add(boardWrapper, BorderLayout.CENTER);
         add(p1, BorderLayout.WEST);
@@ -96,25 +101,17 @@ public class TripleTriadUI extends JFrame {
     }
 
     private void exemploDeCartasNoCampo(List<CardData> cards, Color color) {
-        final var cardData = cards.get(0);
-        cardData.setOwner(p1.getPlayer());
-        var cardComponent = new CardComponent(cardData, e -> {
-            gameLog.addLogMessage(String.format("A carta '%s' foi selecionada!", cardData.getName()));
-        });
-        board.add(cardComponent, 2, 2);
+        final var cardData = new PlayerCardData(cards.get(0), p2.getPlayer(), false);
+        var cardComponent = new CardComponent(cardData, null, 10);
+        board.addCard(cardComponent, 2, 2);
 
-        final var cardData2 = cards.get(109);
-        cardData2.setOwner(p2.getPlayer());
-        cardComponent = new CardComponent(cardData2, e -> {
-            gameLog.addLogMessage(String.format("A carta '%s' foi selecionada!", cardData2.getName()));
-        });
-        board.add(cardComponent, 1, 1);
+        final var cardData2 = new PlayerCardData(cards.get(109), p2.getPlayer(), false);
+        cardComponent = new CardComponent(cardData2, null, 10);
+        board.addCard(cardComponent, 1, 1);
 
-        final var cardData3 = cards.get(80);
+        final var cardData3 = new PlayerCardData(cards.get(80), p1.getPlayer(), false);
         cardData3.setOwner(p1.getPlayer());
-        cardComponent = new CardComponent(cardData3, e -> {
-            gameLog.addLogMessage(String.format("A carta '%s' foi selecionada!", cardData3.getName()));
-        });
-        board.add(cardComponent, 0, 0);
+        cardComponent = new CardComponent(cardData3, null, 10);
+        board.addCard(cardComponent, 0, 0);
     }
 }

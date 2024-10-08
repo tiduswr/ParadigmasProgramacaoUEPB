@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import com.tiduswr.model.CardData;
 import com.tiduswr.model.CardsReader;
+import com.tiduswr.model.PlayerCardData;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,11 +19,17 @@ import lombok.Setter;
 @Setter @Getter
 public class CardComponent extends JButton {
 
-    private CardData info;
+    private PlayerCardData info;
     private boolean cardIsSelected;
     private static final BufferedImage selectedIcon = CardsReader.selectionIcon();
+    private static final BufferedImage backCard = CardsReader.cardBack();
+    private static final Color SELECTION_COLOR = Color.decode("#347928");
+    private final int OFFSET;
+    private final int COMPENSATION;
 
-    public CardComponent(CardData info, ActionListener listener) {
+    public CardComponent(PlayerCardData info, ActionListener listener) {
+        OFFSET = 0;
+        COMPENSATION = 2;
         this.info = info;
         this.cardIsSelected = false;
         setFocusPainted(false);
@@ -33,8 +39,21 @@ public class CardComponent extends JButton {
         setBorderPainted(false);
     }
 
-    public static CardComponent EMPTY_CARD_COMPONENT() {
-        return new CardComponent(null, null);
+    public CardComponent(PlayerCardData info, ActionListener listener, int offset) {
+        OFFSET = offset;
+        COMPENSATION = 2;
+        this.info = info;
+        this.cardIsSelected = false;
+        setFocusPainted(false);
+        addActionListener(listener);
+        setOpaque(false);
+        setContentAreaFilled(false);
+        setBorderPainted(false);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(true);
     }
 
     @Override
@@ -45,20 +64,22 @@ public class CardComponent extends JButton {
 
         Graphics2D g2d = (Graphics2D) g.create();
 
-        Color selectionColor = Color.decode("#347928");
-        if (getModel().isPressed()) {
-            g2d.setColor(new Color(selectionColor.getRed(), selectionColor.getGreen(), selectionColor.getBlue(), 150));
+        if (info != null && info.isFlipped()) {
+            var w = getWidth() - 2 * OFFSET;
+            var h = getHeight() - 2 * OFFSET;
+            g2d.drawImage(backCard, OFFSET, OFFSET, w-COMPENSATION*2, h-COMPENSATION*2, this);
+            drawSelection(g2d);
+
         } else {
-            g2d.setColor(new Color(255, 255, 255, 0));
-        }
-        g2d.fillRect(0, 0, getWidth(), getHeight());
+            drawSelection(g2d);
 
-        // Desenha o ícone de seleção no canto inferior esquerdo se o card estiver selecionado
-        if (cardIsSelected) {
-            g2d.drawImage(selectedIcon, 7, getHeight() - 32, 40, 25, this);
+            // Desenha o ícone de seleção no canto inferior esquerdo se o card estiver selecionado
+            if (cardIsSelected) {
+                g2d.drawImage(selectedIcon, OFFSET, getHeight() - 32 - OFFSET, 40, 25, this);
+            }
+            
+            if (info != null) drawCardValues(g2d);
         }
-
-        if (info != null) drawCardValues(g2d);
 
         g2d.dispose();
     }
@@ -66,28 +87,28 @@ public class CardComponent extends JButton {
     @Override
     public void setBounds(int x, int y, int width, int height) {
         super.setBounds(x, y, width, height);
-        if (info != null)
+        if (info != null && !info.isFlipped())
             loadCard(width, height);
     }
 
     public void loadCard(int width, int height) {
-        BufferedImage sprite = info.getImage();
+        BufferedImage sprite = info.getCardData().getImage();
 
-        int newWidth = width;
-        int newHeight = height;
+        int newWidth = width - 2 * OFFSET;
+        int newHeight = height - 2 * OFFSET;
 
         // Criar a imagem cortada com o tamanho do componente
-        BufferedImage croppedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage croppedImage = new BufferedImage(newWidth+2, newHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = croppedImage.createGraphics();
-        g2d.drawImage(sprite, 0, 0, newWidth, newHeight, 2, 2, sprite.getWidth() - 2, sprite.getHeight() - 2, null);
+        g2d.drawImage(sprite, -COMPENSATION, -COMPENSATION, newWidth-COMPENSATION*2, newHeight-COMPENSATION*2, 2, 2, sprite.getWidth() - 2, sprite.getHeight() - 2, null);
         g2d.dispose();
 
         // Criar uma imagem de fundo colorida com o tamanho do componente
         Color backgroundColor = info.getOwner().getColor();
-        BufferedImage background = new BufferedImage(newWidth - 5, newHeight - 5, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage background = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2dBackground = background.createGraphics();
         g2dBackground.setColor(backgroundColor);
-        g2dBackground.fillRect(5, 5, newWidth, newHeight);
+        g2dBackground.fillRect(0, 0, newWidth-6, newHeight-6);
         g2dBackground.dispose();
 
         // Mesclar a imagem de fundo com a imagem cortada
@@ -101,30 +122,38 @@ public class CardComponent extends JButton {
         setIcon(new ImageIcon(mergedImage));
     }
 
+    private void drawSelection(Graphics2D g2d){
+        Color selectionColor = SELECTION_COLOR;
+        if (getModel().isPressed()) {
+            g2d.setColor(new Color(selectionColor.getRed(), selectionColor.getGreen(), selectionColor.getBlue(), 150));
+        } else {
+            g2d.setColor(new Color(255, 255, 255, 0));
+        }
+        g2d.fillRect(OFFSET, OFFSET, getWidth() - 2 * OFFSET, getHeight() - 2 * OFFSET);
+    }
+
     private void drawCardValues(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        String upValue = info.getUp() == 10 ? "A" : String.valueOf(info.getUp());
-        String downValue = info.getDown() == 10 ? "A" : String.valueOf(info.getDown());
-        String leftValue = info.getLeft() == 10 ? "A" : String.valueOf(info.getRight());
-        String rightValue = info.getRight() == 10 ? "A" : String.valueOf(info.getLeft());
+        String upValue = info.getCardData().getUp() == 10 ? "A" : String.valueOf(info.getCardData().getUp());
+        String downValue = info.getCardData().getDown() == 10 ? "A" : String.valueOf(info.getCardData().getDown());
+        String leftValue = info.getCardData().getLeft() == 10 ? "A" : String.valueOf(info.getCardData().getRight());
+        String rightValue = info.getCardData().getRight() == 10 ? "A" : String.valueOf(info.getCardData().getLeft());
 
-        drawValue(g2d, String.valueOf(upValue), 24, 23);
-        drawValue(g2d, String.valueOf(downValue), 24, 46);
-        drawValue(g2d, String.valueOf(leftValue), 9, 38);
-        drawValue(g2d, String.valueOf(rightValue), 39, 38);
+        drawValue(g2d, String.valueOf(upValue), 24 + OFFSET, 23 + OFFSET);
+        drawValue(g2d, String.valueOf(downValue), 24 + OFFSET, 46 + OFFSET);
+        drawValue(g2d, String.valueOf(leftValue), 9 + OFFSET, 38 + OFFSET);
+        drawValue(g2d, String.valueOf(rightValue), 39 + OFFSET, 38 + OFFSET);
 
-        if (info.getTypeIcon() != null) drawType(g2d);
-
-        g2d.dispose();
+        if (info.getCardData().getTypeIcon() != null) drawType(g2d);
     }
 
     private void drawType(Graphics2D g2d) {
-        var icon = info.getTypeIcon();
-        var y = 10;
-        var x = getWidth() - (icon.getWidth() + 9);
+        var icon = info.getCardData().getTypeIcon();
+        var y = 10 + OFFSET;
+        var x = getWidth() - (icon.getWidth() + 9 + OFFSET);
 
-        g2d.drawImage(info.getTypeIcon(), x, y, 25, 25, this);
+        g2d.drawImage(info.getCardData().getTypeIcon(), x, y, 25, 25, this);
     }
 
     private void drawValue(Graphics2D g2d, String value, int x, int y) {
@@ -139,8 +168,7 @@ public class CardComponent extends JButton {
             }
         }
 
-        g2d.setColor(Color.BLACK); // Cor do texto
+        g2d.setColor(Color.BLACK);
         g2d.drawString(String.valueOf(value), x, y);
     }
-
 }

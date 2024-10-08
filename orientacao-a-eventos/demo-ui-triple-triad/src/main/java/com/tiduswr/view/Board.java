@@ -16,7 +16,7 @@ public class Board extends BackgroundPanel {
     private CardComponent[][] boardButtons;
     private List<CardData> allCards;
     private List<CardAddedListener> cardAddedListeners;
-    private List<PositionListener> positionListeners; // Lista de PositionListeners
+    private List<PositionListener> positionListeners;
 
     public Board(String filename, List<CardData> allCards) {
         super(filename);
@@ -24,7 +24,7 @@ public class Board extends BackgroundPanel {
         setLayout(new GridLayout(3, 3));
         this.allCards = allCards;
         this.cardAddedListeners = new ArrayList<>();
-        this.positionListeners = new ArrayList<>(); // Inicializa a lista de PositionListeners
+        this.positionListeners = new ArrayList<>();
         initializeBoard();
     }
 
@@ -33,10 +33,10 @@ public class Board extends BackgroundPanel {
     }
 
     public void addPositionListener(PositionListener listener) {
-        positionListeners.add(listener); // Adiciona o PositionListener à lista
+        positionListeners.add(listener);
     }
 
-    public boolean add(CardComponent card, int row, int col) {
+    public boolean addCard(CardComponent card, int row, int col) {
         if (boardButtons[row][col].getInfo() != null)
             return false;
 
