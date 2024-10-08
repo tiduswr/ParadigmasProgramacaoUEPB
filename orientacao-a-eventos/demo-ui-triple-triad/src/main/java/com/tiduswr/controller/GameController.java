@@ -1,7 +1,6 @@
 package com.tiduswr.controller;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
@@ -15,19 +14,15 @@ public class GameController {
         var cards = CardsReader.readCardsFromCSV(); // Carrega cartas
         var soundService = new SoundService("theme.wav"); // Carrega musica tema
 
-        try{
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        new TripleTriadUI(cards, soundService);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new TripleTriadUI(cards, soundService);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
-        }catch(InterruptedException | InvocationTargetException e){
-            throw new RuntimeException(e);
-        }
+            }
+        });
     }
 }
