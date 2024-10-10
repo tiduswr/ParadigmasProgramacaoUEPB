@@ -1,102 +1,83 @@
 package com.tiduswr.model;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import com.adonax.audiocue.AudioCue;
+import com.adonax.audiocue.AudioCueInstanceEvent;
+import com.adonax.audiocue.AudioCueListener;
 
 public class SoundService {
 
-    private List<Clip> clipPool = new ArrayList<>();
-    private int poolSize;
+    private AudioCue audioCue;
+    private float vol;
     private String path;
-    private int loopStartFrame;
-    private int loopEndFrame;
 
-    public SoundService(String path, int poolSize) {
+    public SoundService(String path) {
         this.path = path;
-        this.poolSize = poolSize;
-        initializeClipPool();
+        initializeAudioCue(path);
     }
 
-    public SoundService(String path, int poolSize, float volume) {
-        this(path, poolSize);
-        setVolume(volume);
+    public SoundService(String path, float volume) {
+        this(path);
+        this.vol = volume;
     }
 
-    private void initializeClipPool() {
+    private void initializeAudioCue(String path) {
         try {
-            for (int i = 0; i < poolSize; i++) {
-                Clip clip = AudioSystem.getClip();
-                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
-                clip.open(audioInputStream);
-                clipPool.add(clip);
-            }
-        } catch (Exception e) {
+            audioCue = AudioCueManager.getInstance().getAudioCue(path);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
     }
 
     public void play() {
-        Clip clip = getAvailableClip();
-        if (clip != null) {
-            clip.stop();
-            clip.setFramePosition(0);  // Reinicia do início
-            clip.start();
+        play(false);
+    }
+
+    public void play(boolean loop) {
+        if (audioCue != null) {
+            audioCue.play(vol, 0.0, 1.0, loop ? -1 : 0);
         }
     }
 
-    public SoundService playWithLoop(int loopStartMillis, int loopEndMillis) {
-        Clip clip = getAvailableClip();
-        if (clip != null) {
-            loopStartFrame = millisToFrames(loopStartMillis, clip);
-            loopEndFrame = loopEndMillis > 0 ? millisToFrames(loopEndMillis, clip) : -1;  // Se -1, repete até o fim
+    public void playThenLoop(String wavToLoopPath) {
+        play();
+        audioCue.addAudioCueListener(new AudioCueListener() {
 
-            clip.setLoopPoints(loopStartFrame, loopEndFrame);
-            clip.setFramePosition(0);  // Começa do início
-            clip.start();
+            @Override
+            public void audioCueOpened(long now, int threadPriority, int bufferSize, AudioCue source) {}
 
-            // Inicia o loop contínuo a partir do ponto definido
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        }
-        return this;
-    }
+            @Override
+            public void audioCueClosed(long now, AudioCue source) {}
 
-    private int millisToFrames(int millis, Clip clip) {
-        float frameRate = clip.getFormat().getFrameRate();
-        return Math.round(millis * frameRate / 1000);
-    }
+            @Override
+            public void instanceEventOccurred(AudioCueInstanceEvent event) {
+                switch (event.type) {
+                    case STOP_INSTANCE:
+                        try {                            
+                            var manager = AudioCueManager.getInstance();
+                            manager.closeInstace(audioCue, path);
+                            path = wavToLoopPath;
 
-    private Clip getAvailableClip() {
-        for (Clip clip : clipPool) {
-            if (!clip.isRunning()) {
-                return clip;
+                            audioCue = manager.getAudioCue(path);
+                            play(true);
+                        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                
+                    default:
+                        break;
+                }
             }
-        }
-        return null;
+            
+        });
     }
 
-    public void stop() {
-        for (Clip clip : clipPool) {
-            clip.stop();
-        }
-    }
-
-    public void setVolume(float volume) {
-        for (Clip clip : clipPool) {
-            if (clip.isOpen()) {
-                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                // Converte o volume de 0.0 (silêncio) a 1.0 (máximo) para o valor decibel apropriado
-                float dB = (float) (20 * Math.log10(volume));
-                gainControl.setValue(dB);
-            }
-        }
+    public void close() {
+        AudioCueManager.getInstance().closeAll();
     }
 }

@@ -37,7 +37,7 @@ public class TripleTriadUI extends JFrame {
         addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosing(WindowEvent e) {
-                themeSoundService.stop();
+                themeSoundService.close();
             }
         });
 
@@ -101,7 +101,7 @@ public class TripleTriadUI extends JFrame {
 
         // Configurações de janela
         setLocationRelativeTo(null);
-        themeSoundService.playWithLoop(56200, -1);
+        themeSoundService.playThenLoop("theme-loop.wav");
         setVisible(true);
     }
 

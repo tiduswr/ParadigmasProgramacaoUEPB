@@ -12,8 +12,8 @@ public class GameController {
     
     public void createWindow(){
         var cards = CardsReader.readCardsFromCSV(); // Carrega cartas
-        var themeSongService = new SoundService("theme.wav", 1, 0.5f); // Carrega musica tema
-        var selectionSongService = new SoundService("selection.wav", 10); // Carrega efeito de seleção
+        var themeSongService = new SoundService("theme-start.wav", 0.8f); // Carrega musica tema
+        var selectionSongService = new SoundService("selection.wav", 0.8f); // Carrega efeito de seleção
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
