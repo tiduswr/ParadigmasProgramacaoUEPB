@@ -9,6 +9,9 @@ import javax.swing.border.EmptyBorder;
 
 import com.tiduswr.model.Player;
 
+import lombok.Getter;
+
+@Getter
 public class ScorePanel extends JPanel{
     private JLabel scoreLabel;
     private Player p1, p2;
@@ -32,7 +35,8 @@ public class ScorePanel extends JPanel{
         add(scoreLabel);
     }
 
-    public void updateScores(int scoreP1, int scoreP2) {
+    // Atualize p1 ou p2 e depois chame esse método
+    public void updateScores() {
         scoreLabel.setText(String.format("%d : %d", 
             p1.getPoints(),
             p2.getPoints()

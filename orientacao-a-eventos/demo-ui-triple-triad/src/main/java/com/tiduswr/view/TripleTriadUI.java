@@ -26,7 +26,7 @@ public class TripleTriadUI extends JFrame {
     private GameLog gameLog;
     private PlayerCards p1, p2;
     private final int glW, glH, plW, plH;
-    private final Dimension SCREEN_SIZE = new Dimension(800, 800);
+    private final Dimension SCREEN_SIZE = new Dimension(800, 700);
     private SoundService themeSoundService, selectionSoundService;
 
     public TripleTriadUI(List<CardData> cards, SoundService themeSoundServiceInjection, SoundService selectionSoundServiceInjection) throws IOException {
