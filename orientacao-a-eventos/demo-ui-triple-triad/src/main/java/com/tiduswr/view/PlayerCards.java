@@ -46,9 +46,10 @@ public class PlayerCards extends JPanel {
                 selectedIndex = player.getCards().indexOf(cardData);
                 updateBorders();
             });
-            setBorder(BorderFactory.createTitledBorder(getPlayer().getName()));
             add(cardComponent);
         }
+
+        setBorder(BorderFactory.createTitledBorder(getPlayer().getName()));
 
         // Listener para resetar seleção ao clicar fora das cartas
         father.addMouseListener(new MouseAdapter() {

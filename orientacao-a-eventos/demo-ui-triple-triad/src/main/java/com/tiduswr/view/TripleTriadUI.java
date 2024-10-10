@@ -21,12 +21,12 @@ import lombok.Getter;
 
 @Getter
 public class TripleTriadUI extends JFrame {
-    
+
     private Board board;
     private GameLog gameLog;
     private PlayerCards p1, p2;
     private final int glW, glH, plW, plH;
-    private final Dimension SCREEN_SIZE = new Dimension(800, 700);
+    private final Dimension SCREEN_SIZE = new Dimension(800, 800);
     private SoundService themeSoundService, selectionSoundService;
 
     public TripleTriadUI(List<CardData> cards, SoundService themeSoundServiceInjection, SoundService selectionSoundServiceInjection) throws IOException {
@@ -34,7 +34,7 @@ public class TripleTriadUI extends JFrame {
         this.selectionSoundService = selectionSoundServiceInjection;
 
         // Tocador de fitas :)
-        addWindowListener(new WindowAdapter(){
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 themeSoundService.close();
@@ -58,8 +58,8 @@ public class TripleTriadUI extends JFrame {
         layout.setVgap(10);
         layout.setHgap(10);
         setLayout(layout);
-        
-        //Instancia do gamelog para mensagens
+
+        // Instancia do gamelog para mensagens
         gameLog = new GameLog();
 
         // Wrapper para o campo
@@ -68,18 +68,18 @@ public class TripleTriadUI extends JFrame {
         board.addCardAddedListener(e -> {
             gameLog.addLogMessage("A carta '" + e.getCard().getInfo().getCardData().getName() + "' foi inserida!");
         });
-        board.addPositionListener( (row, col) -> {
+        board.addPositionListener((row, col) -> {
             gameLog.addLogMessage("A posição " + String.format("[%d, %d]", row, col) + " foi selecionada!");
         });
         // Exemplo de adição de efeito sonoro ao clicar
-        board.addPositionListener( (row, col) -> {
+        board.addPositionListener((row, col) -> {
             selectionSoundService.play();
         });
         boardWrapper.add(board, BorderLayout.CENTER);
 
         // Pode ser visto outra forma de pegar esses dados
-        p1 = new PlayerCards(this, new Player("José", cards.subList(0, 5), Color.decode("#08C2FF")), plW, plH);
-        p2 = new PlayerCards(this, new Player("Maria", cards.subList(5, 10), Color.decode("#C96868")), plW, plH);
+        p1 = new PlayerCards(this, new Player("José", 5, cards.subList(0, 5), Color.decode("#08C2FF")), plW, plH);
+        p2 = new PlayerCards(this, new Player("Maria", 5, cards.subList(5, 10), Color.decode("#C96868")), plW, plH);
         p2.setCardsActive(false); // Você pode inativar uma mão de um jogador assim
         p2.processAllPlayerCardData((indice, carta) -> {
             carta.setFlipped(true); // Como você pode esconder cartas da mão do usuário
@@ -90,7 +90,7 @@ public class TripleTriadUI extends JFrame {
 
         // log do jogo
         gameLog.setPreferredSize(new Dimension(glW, glH));
-        
+
         // Adiciona os componentes ao layout
         boardWrapper.setBorder(BorderFactory.createTitledBorder("Campo"));
         gameLog.setBorder(BorderFactory.createTitledBorder("Log de Jogadas"));
@@ -99,11 +99,15 @@ public class TripleTriadUI extends JFrame {
         add(p2, BorderLayout.EAST);
         add(gameLog, BorderLayout.SOUTH);
 
+        // Criação do painel de pontuação
+        JPanel scorePanel = new ScorePanel(p1.getPlayer(), p2.getPlayer());
+        add(scorePanel, BorderLayout.NORTH); // Adiciona o painel de pontuação no topo
+
         // Configurações de janela
         setLocationRelativeTo(null);
         themeSoundService.playThenLoop("theme-loop.wav");
         setVisible(true);
-    }
+    }    
 
     private void exemploDeCartasNoCampo(List<CardData> cards, Color color) {
         final var cardData = new PlayerCardData(cards.get(0), p2.getPlayer(), false);

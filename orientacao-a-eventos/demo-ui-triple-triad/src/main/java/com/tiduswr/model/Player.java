@@ -10,6 +10,7 @@ import lombok.Getter;
 public class Player {
 
     private String name;
+    private int points;
     private List<CardData> cards;
     private Color color;    
 
