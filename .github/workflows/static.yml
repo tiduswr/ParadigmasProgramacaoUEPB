@@ -28,10 +28,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17' # Pode ser 11, 8, ou 17 conforme necessário
-
-      - name: Verify Java Installation
-        run: java -version # Verifica se o Java foi instalado corretamente
+          java-version: '17' # Ajuste conforme necessário
 
       - name: Build and generate Javadoc
         run: |
@@ -43,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'target/site/apidocs' # Caminho correto para a documentação gerada
+          path: 'target/site/apidocs' # Certifique-se de que este caminho está correto
 
       - name: Deploy to GitHub Pages
         id: deployment
