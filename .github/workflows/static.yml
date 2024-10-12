@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy Javadoc to GitHub Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -31,13 +31,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17' # Defina a versão do Java conforme necessário
+
+      - name: Build and generate Javadoc
+        run: |
+          mvn clean install javadoc:javadoc # Altere o comando conforme necessário para gerar o Javadoc
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload content from the documentation folder
-          path: 'orientacao-a-eventos/demo-ui-triple-triad/documentation/'
+          # Upload content from the generated Javadoc folder
+          path: 'target/site/apidocs' # Altere para o caminho correto da documentação gerada
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
