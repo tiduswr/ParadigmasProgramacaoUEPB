@@ -24,6 +24,7 @@ public class CardComponent extends JButton {
     private boolean cardIsSelected;
     private static final BufferedImage selectedIcon = CardsReader.selectionIcon();
     private static final BufferedImage backCard = CardsReader.cardBack();
+    private static final Font font = new Font("sans", Font.BOLD, 18);
     private final int OFFSET;
     private final int COMPENSATION;
 
@@ -95,8 +96,21 @@ public class CardComponent extends JButton {
                 g2d.drawImage(selectedIcon, OFFSET, getHeight() - 32 - OFFSET, 40, 25, this);
             }
             
-            if (info != null) drawCardValues(g2d);
+            if (info != null) {
+                drawCardValues(g2d);
+                
+                // Desenha o valor de modificador (Ascend ou Descend)
+                if(info.getModifier() != 0){
+                    var strModifier = info.getModifier() > 0 ? "+" + Integer.toString(info.getModifier()) : Integer.toString(info.getModifier());
+                    var color = info.getModifier() < 0 ? Color.RED : Color.decode("#08a833");
+                    var metrics = g.getFontMetrics(font);
+                    var fontWidth = metrics.stringWidth(strModifier);
+                    var fontHeight = metrics.getHeight();
+                    var xOffset = 15;
 
+                    drawValue(g2d, strModifier, getWidth() - (fontWidth + xOffset) - OFFSET, getHeight() - fontHeight - OFFSET, color);
+                }
+            }
             drawSelection(g2d);
         }
 
@@ -149,18 +163,22 @@ public class CardComponent extends JButton {
         }
     }
 
+    private String convertSideValue(int value){
+        return value == 10 ? "A" : String.valueOf(value);
+    }
+
     private void drawCardValues(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        String upValue = info.getCardData().getUp() == 10 ? "A" : String.valueOf(info.getCardData().getUp());
-        String downValue = info.getCardData().getDown() == 10 ? "A" : String.valueOf(info.getCardData().getDown());
-        String leftValue = info.getCardData().getLeft() == 10 ? "A" : String.valueOf(info.getCardData().getLeft());
-        String rightValue = info.getCardData().getRight() == 10 ? "A" : String.valueOf(info.getCardData().getRight());
+        String upValue = convertSideValue(info.getCardData().getUp());
+        String downValue = convertSideValue(info.getCardData().getDown());
+        String leftValue = convertSideValue(info.getCardData().getLeft());
+        String rightValue = convertSideValue(info.getCardData().getRight());
 
-        drawValue(g2d, String.valueOf(upValue), 24 + OFFSET, 23 + OFFSET);
-        drawValue(g2d, String.valueOf(downValue), 24 + OFFSET, 46 + OFFSET);
-        drawValue(g2d, String.valueOf(leftValue), 9 + OFFSET, 38 + OFFSET);
-        drawValue(g2d, String.valueOf(rightValue), 39 + OFFSET, 38 + OFFSET);
+        drawValue(g2d, upValue, 24 + OFFSET, 23 + OFFSET, Color.BLACK);
+        drawValue(g2d, downValue, 24 + OFFSET, 46 + OFFSET, Color.BLACK);
+        drawValue(g2d, leftValue, 9 + OFFSET, 38 + OFFSET, Color.BLACK);
+        drawValue(g2d, rightValue, 39 + OFFSET, 38 + OFFSET, Color.BLACK);
 
         if (info.getCardData().getTypeIcon() != null) drawType(g2d);
     }
@@ -173,8 +191,8 @@ public class CardComponent extends JButton {
         g2d.drawImage(info.getCardData().getTypeIcon(), x, y, 25, 25, this);
     }
 
-    private void drawValue(Graphics2D g2d, String value, int x, int y) {
-        g2d.setFont(new Font("sans", Font.BOLD, 18));
+    private void drawValue(Graphics2D g2d, String value, int x, int y, Color color) {
+        g2d.setFont(font);
         g2d.setColor(Color.WHITE); // Cor da borda
         float outlineThickness = 1.5f;
 
@@ -185,7 +203,7 @@ public class CardComponent extends JButton {
             }
         }
 
-        g2d.setColor(Color.BLACK);
+        g2d.setColor(color);
         g2d.drawString(String.valueOf(value), x, y);
     }
 }
