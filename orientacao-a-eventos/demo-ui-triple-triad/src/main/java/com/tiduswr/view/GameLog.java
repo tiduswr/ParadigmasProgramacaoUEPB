@@ -29,11 +29,11 @@ public class GameLog extends JPanel {
         setLayout(new BorderLayout());
         
         logArea = new JTextPane();
-        logArea.setEditable(false); // A área de texto não é editável
-        logArea.setContentType("text/html"); // Permite o uso de estilos
+        logArea.setEditable(false);
+        logArea.setContentType("text/html");
 
-        JScrollPane scrollPane = new JScrollPane(logArea); // Adiciona rolagem
-        add(scrollPane, BorderLayout.CENTER); // Adiciona a área de rolagem ao painel
+        JScrollPane scrollPane = new JScrollPane(logArea);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
     /**
@@ -43,22 +43,22 @@ public class GameLog extends JPanel {
      */
     public void addLogMessage(String message) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String timestamp = LocalDateTime.now().format(formatter); // Formata a data e hora atual
+        String timestamp = LocalDateTime.now().format(formatter);
 
-        Style style = logArea.addStyle("Bold", null); // Define um estilo para o timestamp
-        StyleConstants.setBold(style, true); // Define o estilo como negrito
-        StyleConstants.setForeground(style, Color.BLACK); // Define a cor do texto como preto
+        Style style = logArea.addStyle("Bold", null);
+        StyleConstants.setBold(style, true); 
+        StyleConstants.setForeground(style, Color.BLACK);
 
         StyledDocument doc = logArea.getStyledDocument();
 
         try {
-            doc.insertString(doc.getLength(), "[" + timestamp + "] ", logArea.getStyle("Bold")); // Insere o timestamp
-            doc.insertString(doc.getLength(), message + "\n", null); // Insere a mensagem
+            doc.insertString(doc.getLength(), "[" + timestamp + "] ", logArea.getStyle("Bold"));
+            doc.insertString(doc.getLength(), message + "\n", null);
         } catch (BadLocationException e) {
-            e.printStackTrace(); // Imprime a pilha de erros se houver uma exceção
+            e.printStackTrace();
         }
 
         // Rola para a última linha
-        logArea.setCaretPosition(doc.getLength()); // Define o cursor na última linha
+        logArea.setCaretPosition(doc.getLength());
     }
 }

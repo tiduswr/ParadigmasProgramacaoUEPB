@@ -40,16 +40,16 @@ public class ScorePanel extends JPanel {
      * Configura o layout, o rótulo e as propriedades visuais.
      */
     private void createScorePanel() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // Define o layout em coluna
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         scoreLabel = new JLabel(String.format("%d : %d", 
             p1.getPoints(),
             p2.getPoints()
         ));
-        scoreLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT); // Centraliza o rótulo
-        scoreLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Define a fonte do rótulo
-        setBorder(new EmptyBorder(5, 0, 0, 0)); // Define a borda do painel
-        add(scoreLabel); // Adiciona o rótulo ao painel
+        scoreLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        setBorder(new EmptyBorder(5, 0, 0, 0));
+        add(scoreLabel);
     }
 
     /**

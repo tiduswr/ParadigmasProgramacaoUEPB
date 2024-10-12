@@ -8,15 +8,17 @@ import java.util.Map;
  */
 public class SoundServices {
     
-    private Map<String, SoundService> services; // Mapa que armazena serviços de som
-    private float vol; // Volume padrão para os serviços de som
+    /**  Mapa que armazena serviços de som */
+    private Map<String, SoundService> services;
+    /**  Volume padrão para os serviços de som */
+    private float vol;
 
     /**
      * Construtor que inicializa o mapa de serviços de som e define o volume padrão.
      */
     public SoundServices(){
         this.services = new HashMap<>();
-        this.vol = 0.8f; // Volume padrão inicial
+        this.vol = 0.8f;
     }
 
     /**

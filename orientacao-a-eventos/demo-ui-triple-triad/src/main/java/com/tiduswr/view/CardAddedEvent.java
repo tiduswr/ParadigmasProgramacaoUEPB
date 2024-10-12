@@ -14,14 +14,14 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CardAddedEvent {
-    // A carta que foi adicionada
+    /**  A carta que foi adicionada */
     private PlayerCardData card; 
-    // A carta acima da carta adicionada   
+    /**  A carta acima da carta adicionada    */
     private PlayerCardData top;   
-    // A carta abaixo da carta adicionada  
+    /**  A carta abaixo da carta adicionada   */
     private PlayerCardData bottom;  
-    // A carta à esquerda da carta adicionada
+    /**  A carta à esquerda da carta adicionada */
     private PlayerCardData left;  
-    // A carta à direita da carta adicionada  
+    /**  A carta à direita da carta adicionada   */
     private PlayerCardData right;   
 }

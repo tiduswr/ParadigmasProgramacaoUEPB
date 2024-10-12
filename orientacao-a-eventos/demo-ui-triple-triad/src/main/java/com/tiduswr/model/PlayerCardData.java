@@ -13,16 +13,16 @@ import lombok.Setter;
 @Setter 
 @AllArgsConstructor
 public class PlayerCardData {
-    // Dados da carta
+    /** Dados da carta */
     private CardData cardData; 
-    // Jogador que possui a carta
+    /** Jogador que possui a carta  */
     private Player owner; 
-    /* 
+    /** 
         Modificador utilizado para aplicar regras de jogo como Ascend e Descend. 
         Um valor positivo ou negativo deve ser atribuído aqui para influenciar 
         a comparação dos lados das cartas durante o jogo.
     */
     private int modifier; 
-    // Indica se a carta está virada
+    /** Indica se a carta está virada  */
     private boolean flipped; 
 }

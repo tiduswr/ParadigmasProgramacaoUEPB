@@ -14,11 +14,11 @@ import com.adonax.audiocue.AudioCueListener;
  */
 public class SoundService {
 
-    // Objeto que representa a reprodução do áudio
+    /**  Objeto que representa a reprodução do áudio */
     private AudioCue audioCue; 
-    // Volume do áudio
+    /**  Volume do áudio */
     private float vol; 
-    // Caminho do arquivo de áudio
+    /**  Caminho do arquivo de áudio */
     private String path; 
 
     /**

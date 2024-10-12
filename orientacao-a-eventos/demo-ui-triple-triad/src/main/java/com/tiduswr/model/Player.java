@@ -11,13 +11,13 @@ import lombok.Getter;
 @Getter
 public class Player {
 
-    // Nome do jogador
+    /**  Nome do jogador */
     private String name; 
-    // Pontos iniciais do jogador
+    /**  Pontos iniciais do jogador */
     private final int points = 5; 
-    // Cartas do jogador
+    /**  Cartas do jogador */
     private List<CardData> cards; 
-    // Cor associada ao jogador
+    /**  Cor associada ao jogador */
     private Color color; 
 
     /**

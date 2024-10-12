@@ -69,7 +69,7 @@ public class PlayerCards extends JPanel {
             add(cardComponent);
         }
 
-        setBorder(BorderFactory.createTitledBorder(getPlayer().getName())); // Adiciona borda com o nome do jogador
+        setBorder(BorderFactory.createTitledBorder(getPlayer().getName()));
 
         // Listener para resetar seleção ao clicar fora das cartas
         father.addMouseListener(new MouseAdapter() {
@@ -143,8 +143,8 @@ public class PlayerCards extends JPanel {
 
         CardComponent selectedCard = (CardComponent) getComponent(selectedIndex);
         player.getCards().removeIf(card -> card.equals(selectedCard.getInfo().getCardData()));
-        selectedIndex = -1; // Reseta o índice selecionado
-        handSize--; // Reduz o tamanho da mão
+        selectedIndex = -1;
+        handSize--;
 
         remove(selectedCard);
         revalidate();
