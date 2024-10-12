@@ -51,6 +51,10 @@
                     <links>
                         <link>https://docs.oracle.com/en/java/javase/17/docs/api/index.html</link>
                     </links>
+                    <additionalparam>-notree</additionalparam> <!-- Não incluir a árvore de classes -->
+                    <additionalparam>-nodeprecated</additionalparam> <!-- Não incluir a documentação de métodos deprecated -->
+                    <additionalparam>-notimestamp</additionalparam> <!-- Não incluir timestamp -->
+                    <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
             </plugin>
             <plugin>

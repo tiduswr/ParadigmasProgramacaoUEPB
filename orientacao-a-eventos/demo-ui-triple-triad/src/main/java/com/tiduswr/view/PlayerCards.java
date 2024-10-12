@@ -39,11 +39,12 @@ public class PlayerCards extends JPanel {
 
     /**
      * Construtor da classe PlayerCards.
-     * Inicializa o painel com as cartas do jogador e configura os ouvintes de eventos.
+     * Inicializa o painel com as cartas do jogador e configura os ouvintes de
+     * eventos.
      *
      * @param father A interface do jogo que contém este componente.
      * @param player O jogador associado a estas cartas.
-     * @param width Largura preferida do painel.
+     * @param width  Largura preferida do painel.
      * @param height Altura preferida do painel.
      */
     public PlayerCards(TripleTriadUI father, Player player, int width, int height) {
@@ -57,7 +58,8 @@ public class PlayerCards extends JPanel {
             var cardData = player.getCards().get(index);
             var playerCardData = new PlayerCardData(cardData, player, 0, false);
             var cardComponent = new CardComponent(playerCardData, e -> {
-                if (!cardsActive || playerCardData.isFlipped()) return;
+                if (!cardsActive || playerCardData.isFlipped())
+                    return;
                 father.getGameLog().addLogMessage(String.format("A carta \'%s\' foi selecionada!", cardData.getName()));
                 father.getSoundServices().getSoundService("selection").play();
                 selectedIndex = player.getCards().indexOf(cardData);
@@ -82,7 +84,8 @@ public class PlayerCards extends JPanel {
             if (selected != null) {
                 if (!father.getBoard().addCard(selected, row, col)) {
                     father.getSoundServices().getSoundService("error").play();
-                    father.getGameLog().addLogMessage(String.format("A posição [%d, %d] já possui uma carta!", row, col));
+                    father.getGameLog()
+                            .addLogMessage(String.format("A posição [%d, %d] já possui uma carta!", row, col));
                 } else {
                     father.getSoundServices().getSoundService("card-placed").play();
                     removeSelected();
@@ -131,7 +134,8 @@ public class PlayerCards extends JPanel {
      */
     public boolean removeSelected() {
         var selected = getSelected();
-        if (selected == null) return false;
+        if (selected == null)
+            return false;
         CardComponent selectedCard = (CardComponent) getComponent(selectedIndex);
         player.getCards().removeIf(card -> card.equals(selectedCard.getInfo().getCardData()));
         selectedIndex = -1;
@@ -159,7 +163,8 @@ public class PlayerCards extends JPanel {
     /**
      * Processa todos os dados das cartas do jogador, aplicando uma ação a cada um.
      *
-     * @param action A ação a ser aplicada, representada como um BiConsumer que recebe o índice e os dados da carta.
+     * @param action A ação a ser aplicada, representada como um BiConsumer que
+     *               recebe o índice e os dados da carta.
      */
     public void processAllPlayerCardData(BiConsumer<Integer, PlayerCardData> action) {
         var cards = getAllPlayerCardData();
@@ -171,30 +176,40 @@ public class PlayerCards extends JPanel {
     }
 
     /**
-     * Jogador associado a estas cartas
+     * Obtém o jogador associado a estas cartas.
+     *
+     * @return O jogador que possui estas cartas.
      */
     public Player getPlayer() {
         return this.player;
     }
 
     /**
-     * Número de cartas na mão
+     * Obtém o número de cartas na mão do jogador.
+     *
+     * @return O número de cartas na mão.
      */
     public int getHandSize() {
         return this.handSize;
     }
 
     /**
-     * Indica se as cartas estão ativas para seleção
+     * Verifica se as cartas estão ativas para seleção.
+     *
+     * @return True se as cartas estiverem ativas para seleção, caso contrário,
+     *         false.
      */
     public boolean isCardsActive() {
         return this.cardsActive;
     }
 
     /**
-     * Índice da carta selecionada
+     * Obtém o índice da carta atualmente selecionada.
+     *
+     * @return O índice da carta selecionada.
      */
     public int getSelectedIndex() {
         return this.selectedIndex;
     }
+
 }

@@ -17,7 +17,8 @@ import com.tiduswr.model.PlayerCardData;
 
 /**
  * Componente de carta que representa uma carta do jogo.
- * Herda de JButton e fornece funcionalidades adicionais para exibir informações da carta.
+ * Herda de JButton e fornece funcionalidades adicionais para exibir informações
+ * da carta.
  */
 public class CardComponent extends JButton {
     /**
@@ -60,7 +61,7 @@ public class CardComponent extends JButton {
     /**
      * Construtor da classe CardComponent.
      *
-     * @param info Informações da carta.
+     * @param info     Informações da carta.
      * @param listener Listener de ação para o botão.
      */
     public CardComponent(PlayerCardData info, ActionListener listener) {
@@ -86,9 +87,9 @@ public class CardComponent extends JButton {
     /**
      * Construtor da classe CardComponent com deslocamento personalizado.
      *
-     * @param info Informações da carta.
+     * @param info     Informações da carta.
      * @param listener Listener de ação para o botão.
-     * @param offset Deslocamento para renderização.
+     * @param offset   Deslocamento para renderização.
      */
     public CardComponent(PlayerCardData info, ActionListener listener, int offset) {
         OFFSET = offset;
@@ -118,14 +119,16 @@ public class CardComponent extends JButton {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (!isEnabled()) return;
+        if (!isEnabled())
+            return;
         Graphics2D g2d = (Graphics2D) g.create();
         if (info != null && info.isFlipped()) {
             var w = getWidth() - 2 * OFFSET;
             var h = getHeight() - 2 * OFFSET;
             g2d.drawImage(backCard, OFFSET, OFFSET, w - COMPENSATION * 2, h - COMPENSATION * 2, this);
         } else {
-            // Desenha o ícone de seleção no canto inferior esquerdo se a carta estiver selecionada
+            // Desenha o ícone de seleção no canto inferior esquerdo se a carta estiver
+            // selecionada
             if (cardIsSelected) {
                 g2d.drawImage(selectedIcon, OFFSET, getHeight() - 32 - OFFSET, 40, 25, this);
             }
@@ -133,13 +136,15 @@ public class CardComponent extends JButton {
                 drawCardValues(g2d);
                 // Desenha o valor de modificador (Ascend ou Descend)
                 if (info.getModifier() != 0) {
-                    var strModifier = info.getModifier() > 0 ? "+" + Integer.toString(info.getModifier()) : Integer.toString(info.getModifier());
+                    var strModifier = info.getModifier() > 0 ? "+" + Integer.toString(info.getModifier())
+                            : Integer.toString(info.getModifier());
                     var color = info.getModifier() < 0 ? Color.RED : Color.decode("#08a833");
                     var metrics = g.getFontMetrics(font);
                     var fontWidth = metrics.stringWidth(strModifier);
                     var fontHeight = metrics.getHeight();
                     var xOffset = 15;
-                    drawValue(g2d, strModifier, getWidth() - (fontWidth + xOffset) - OFFSET, getHeight() - fontHeight - OFFSET, color);
+                    drawValue(g2d, strModifier, getWidth() - (fontWidth + xOffset) - OFFSET,
+                            getHeight() - fontHeight - OFFSET, color);
                 }
             }
             drawSelection(g2d);
@@ -150,13 +155,14 @@ public class CardComponent extends JButton {
     @Override
     public void setBounds(int x, int y, int width, int height) {
         super.setBounds(x, y, width, height);
-        if (info != null && !info.isFlipped()) loadCard(width, height);
+        if (info != null && !info.isFlipped())
+            loadCard(width, height);
     }
 
     /**
      * Carrega a carta no componente com o tamanho especificado.
      *
-     * @param width Largura do componente.
+     * @param width  Largura do componente.
      * @param height Altura do componente.
      */
     public void loadCard(int width, int height) {
@@ -166,7 +172,8 @@ public class CardComponent extends JButton {
         // Criar a imagem cortada com o tamanho do componente
         BufferedImage croppedImage = new BufferedImage(newWidth + 2, newHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = croppedImage.createGraphics();
-        g2d.drawImage(sprite, -COMPENSATION, -COMPENSATION, newWidth - COMPENSATION * 2, newHeight - COMPENSATION * 2, 2, 2, sprite.getWidth() - 2, sprite.getHeight() - 2, null);
+        g2d.drawImage(sprite, -COMPENSATION, -COMPENSATION, newWidth - COMPENSATION * 2, newHeight - COMPENSATION * 2,
+                2, 2, sprite.getWidth() - 2, sprite.getHeight() - 2, null);
         g2d.dispose();
         // Criar uma imagem de fundo colorida com o tamanho do componente
         Color backgroundColor = info.getOwner().getColor();
@@ -223,7 +230,8 @@ public class CardComponent extends JButton {
         drawValue(g2d, downValue, 24 + OFFSET, 46 + OFFSET, Color.BLACK);
         drawValue(g2d, leftValue, 9 + OFFSET, 38 + OFFSET, Color.BLACK);
         drawValue(g2d, rightValue, 39 + OFFSET, 38 + OFFSET, Color.BLACK);
-        if (info.getCardData().getTypeIcon() != null) drawType(g2d);
+        if (info.getCardData().getTypeIcon() != null)
+            drawType(g2d);
     }
 
     /**
@@ -241,10 +249,10 @@ public class CardComponent extends JButton {
     /**
      * Desenha o valor da carta no componente com borda.
      *
-     * @param g2d O objeto Graphics2D usado para desenhar.
+     * @param g2d   O objeto Graphics2D usado para desenhar.
      * @param value O valor a ser desenhado.
-     * @param x A posição X onde o valor deve ser desenhado.
-     * @param y A posição Y onde o valor deve ser desenhado.
+     * @param x     A posição X onde o valor deve ser desenhado.
+     * @param y     A posição Y onde o valor deve ser desenhado.
      * @param color A cor do texto.
      */
     private void drawValue(Graphics2D g2d, String value, int x, int y, Color color) {
@@ -262,72 +270,49 @@ public class CardComponent extends JButton {
     }
 
     /**
-     * Informação da carta
+     * Define as informações da carta exibida no componente.
+     *
+     * @param info As informações da carta a serem exibidas.
      */
     public void setInfo(final PlayerCardData info) {
         this.info = info;
     }
 
     /**
-     * Indica se a carta está selecionada
+     * Define se a carta está selecionada.
+     *
+     * @param cardIsSelected True se a carta estiver selecionada, caso contrário,
+     *                       false.
      */
     public void setCardIsSelected(final boolean cardIsSelected) {
         this.cardIsSelected = cardIsSelected;
     }
 
     /**
-     * Posição do clique em X
-     */
-    public void setClickX(final int clickX) {
-        this.clickX = clickX;
-    }
-
-    /**
-     * Posição do clique em Y
-     */
-    public void setClickY(final int clickY) {
-        this.clickY = clickY;
-    }
-
-    /**
-     * Informação da carta
+     * Obtém as informações da carta exibida no componente.
+     *
+     * @return As informações da carta ou null se não houver carta.
      */
     public PlayerCardData getInfo() {
         return this.info;
     }
 
     /**
-     * Indica se a carta está selecionada
+     * Verifica se a carta está selecionada.
+     *
+     * @return True se a carta estiver selecionada, caso contrário, false.
      */
     public boolean isCardIsSelected() {
         return this.cardIsSelected;
     }
 
     /**
-     * Deslocamento para renderização
+     * Obtém o valor de deslocamento usado para renderizar a carta no componente.
+     *
+     * @return O valor do deslocamento.
      */
     public int getOFFSET() {
         return this.OFFSET;
     }
 
-    /**
-     * Compensação para renderização
-     */
-    public int getCOMPENSATION() {
-        return this.COMPENSATION;
-    }
-
-    /**
-     * Posição do clique em X
-     */
-    public int getClickX() {
-        return this.clickX;
-    }
-
-    /**
-     * Posição do clique em Y
-     */
-    public int getClickY() {
-        return this.clickY;
-    }
 }
