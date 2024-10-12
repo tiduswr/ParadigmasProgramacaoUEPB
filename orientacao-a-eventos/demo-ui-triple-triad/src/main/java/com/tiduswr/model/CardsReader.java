@@ -9,8 +9,16 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Classe responsável por ler os dados das cartas a partir de arquivos de imagem e CSV.
+ */
 public class CardsReader {
 
+    /**
+     * Lê a imagem de fundo das cartas.
+     * 
+     * @return A imagem de fundo das cartas como um objeto BufferedImage.
+     */
     public static BufferedImage cardBack(){
         try{
             return ImageIO.read(CardsReader.class.getClassLoader().getResourceAsStream("cards/back.png"));
@@ -19,6 +27,11 @@ public class CardsReader {
         }
     } 
 
+    /**
+     * Lê o ícone de seleção das cartas.
+     * 
+     * @return O ícone de seleção como um objeto BufferedImage.
+     */
     public static BufferedImage selectionIcon(){
         try{
             return ImageIO.read(CardsReader.class.getClassLoader().getResourceAsStream("hand.png"));
@@ -27,12 +40,18 @@ public class CardsReader {
         }
     } 
 
+    /**
+     * Lê os dados das cartas a partir de um arquivo CSV.
+     * Cada linha do arquivo representa uma carta e seus atributos.
+     * 
+     * @return Uma lista de objetos CardData representando as cartas lidas do arquivo.
+     */
     public static List<CardData> readCardsFromCSV() {
         List<CardData> cardList = new ArrayList<>();
         String line = "";
         
         try (BufferedReader br = new BufferedReader(new InputStreamReader(CardsReader.class.getClassLoader().getResourceAsStream("cards.csv")))) {
-            br.readLine();
+            br.readLine(); // Ignora o cabeçalho do CSV
 
             while ((line = br.readLine()) != null) {    
                 System.out.println("Loading: " + line);
@@ -46,6 +65,8 @@ public class CardsReader {
                 card.setRight(Integer.parseInt(cardData[5]));
                 card.setImage(ImageIO.read(CardsReader.class.getClassLoader().getResourceAsStream("cards/" + cardData[0] + ".png")));
                 card.setType(cardData[6]);
+
+                // Lê o ícone do tipo de carta com base no tipo definido no CSV
                 switch (cardData[6]) {
                     case "WIND":
                     case "WATER":
@@ -61,12 +82,11 @@ public class CardsReader {
                         break;
                 }
 
-                
                 cardList.add(card);
             }
 
         } catch (IOException e) {
-            System.err.println(e.getLocalizedMessage());;
+            System.err.println(e.getLocalizedMessage());
         }
 
         return cardList;

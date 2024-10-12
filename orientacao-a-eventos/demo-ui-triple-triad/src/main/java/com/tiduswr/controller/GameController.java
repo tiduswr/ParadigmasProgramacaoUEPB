@@ -8,10 +8,16 @@ import com.tiduswr.model.CardsReader;
 import com.tiduswr.model.SoundServices;
 import com.tiduswr.view.TripleTriadUI;
 
+/**
+ * Classe responsável por controlar a criação da interface do jogo e o gerenciamento de recursos.
+ */
 public class GameController {
     
+    /**
+     * Cria a janela do jogo e inicializa os serviços de som e cartas.
+     */
     public void createWindow(){
-        var cards = CardsReader.readCardsFromCSV(); // Carrega cartas
+        var cards = CardsReader.readCardsFromCSV();
         var soundServices = new SoundServices();
         soundServices.createSoundService("main-theme", "theme-start.wav");
         soundServices.createSoundService("selection", "selection.wav");

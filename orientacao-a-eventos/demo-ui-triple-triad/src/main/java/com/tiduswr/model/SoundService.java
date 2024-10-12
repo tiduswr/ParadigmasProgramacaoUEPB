@@ -9,22 +9,44 @@ import com.adonax.audiocue.AudioCue;
 import com.adonax.audiocue.AudioCueInstanceEvent;
 import com.adonax.audiocue.AudioCueListener;
 
+/**
+ * Classe responsável pelo gerenciamento e reprodução de sons no jogo.
+ */
 public class SoundService {
 
-    private AudioCue audioCue;
-    private float vol;
-    private String path;
+    // Objeto que representa a reprodução do áudio
+    private AudioCue audioCue; 
+    // Volume do áudio
+    private float vol; 
+    // Caminho do arquivo de áudio
+    private String path; 
 
+    /**
+     * Construtor que inicializa o serviço de som com o caminho do arquivo de áudio.
+     *
+     * @param path Caminho do arquivo de áudio
+     */
     public SoundService(String path) {
         this.path = path;
         initializeAudioCue(path);
     }
 
+    /**
+     * Construtor que inicializa o serviço de som com o caminho do arquivo de áudio e o volume.
+     *
+     * @param path Caminho do arquivo de áudio
+     * @param volume Volume do áudio
+     */
     public SoundService(String path, float volume) {
         this(path);
         this.vol = volume;
     }
 
+    /**
+     * Inicializa o objeto AudioCue com base no caminho fornecido.
+     *
+     * @param path Caminho do arquivo de áudio
+     */
     private void initializeAudioCue(String path) {
         try {
             audioCue = AudioCueManager.getInstance().getAudioCue(path);
@@ -33,16 +55,29 @@ public class SoundService {
         }
     }
 
+    /**
+     * Reproduz o áudio uma vez.
+     */
     public void play() {
         play(false);
     }
 
+    /**
+     * Reproduz o áudio com a opção de looping.
+     *
+     * @param loop Se verdadeiro, o áudio será reproduzido em loop
+     */
     public void play(boolean loop) {
         if (audioCue != null) {
             audioCue.play(vol, 0.0, 1.0, loop ? -1 : 0);
         }
     }
 
+    /**
+     * Reproduz o áudio e, em seguida, o repete em loop.
+     *
+     * @param wavToLoopPath Caminho do arquivo de áudio a ser reproduzido em loop
+     */
     public void playThenLoop(String wavToLoopPath) {
         play();
         audioCue.addAudioCueListener(new AudioCueListener() {
@@ -77,6 +112,9 @@ public class SoundService {
         });
     }
 
+    /**
+     * Fecha todos os objetos de áudio gerenciados.
+     */
     public void close() {
         AudioCueManager.getInstance().closeAll();
     }
