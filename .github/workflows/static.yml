@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: 'orientacao-a-eventos/demo-ui-triple-triad/documentation/'
+          path: 'orientacao-a-eventos/demo-ui-triple-triad/documentation/apidocs'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
