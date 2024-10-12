@@ -1,9 +1,9 @@
-# Simple workflow for deploying Javadoc to GitHub Pages
-name: Deploy Javadoc to GitHub Pages
+# Simple workflow for deploying index.html to GitHub Pages
+name: Deploy index.html to GitHub Pages
 
 on:
   push:
-    branches: ["master"]
+    branches: ["master"] # Ou 'main', dependendo do seu branch principal
   workflow_dispatch:
 
 permissions:
@@ -25,25 +25,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17' # Ajuste conforme necessário
-
-      - name: Build and generate Javadoc
-        run: |
-          mvn clean install javadoc:javadoc
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'target/site/apidocs' # Certifique-se de que este caminho está correto
+          path: 'orientacao-a-eventos/demo-ui-triple-triad/documentation/index.html' # Caminho para o arquivo index.html
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         with:
-          distribution: 'master'
+          distribution: 'master' # Ou 'master', dependendo do seu branch principal
