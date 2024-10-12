@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tiduswr.model.CardData;
+import com.tiduswr.model.PlayerCardData;
 import com.tiduswr.view.listeners.CardAddedListener;
 import com.tiduswr.view.listeners.PositionListener;
 
@@ -36,20 +37,14 @@ public class Board extends BackgroundPanel {
         positionListeners.add(listener);
     }
 
-    public boolean addCard(CardComponent card, int row, int col) {
+    public boolean addCard(PlayerCardData cardData, int row, int col) {
         if (boardButtons[row][col].getInfo() != null)
             return false;
-
-        boardButtons[row][col] = card;
-        
-        configureCardAddedListeners(card, row, col);
-
-        card.addActionListener(e -> {
-            notifyPositionListeners(row, col);
-        });
-
+        boardButtons[row][col].setInfo(cardData);    
+        configureCardAddedListeners(cardData, row, col);
+    
         redrawCards();
-
+    
         return true;
     }
 
@@ -65,7 +60,7 @@ public class Board extends BackgroundPanel {
         repaint();
     }
 
-    private void configureCardAddedListeners(CardComponent card, int row, int col){
+    private void configureCardAddedListeners(PlayerCardData card, int row, int col){
         CardAddedEvent event = createCardAddedEvent(card, row, col);        
         cardAddedListeners.forEach(listener -> {
             listener.onCardAdded(event);
@@ -78,11 +73,11 @@ public class Board extends BackgroundPanel {
         });
     }
 
-    private CardAddedEvent createCardAddedEvent(CardComponent card, int row, int col) {
-        CardComponent top = (row > 0) ? boardButtons[row - 1][col] : null;
-        CardComponent bottom = (row < 2) ? boardButtons[row + 1][col] : null;
-        CardComponent left = (col > 0) ? boardButtons[row][col - 1] : null;
-        CardComponent right = (col < 2) ? boardButtons[row][col + 1] : null;
+    private CardAddedEvent createCardAddedEvent(PlayerCardData card, int row, int col) {
+        PlayerCardData top = (row > 0) ? boardButtons[row - 1][col].getInfo() : null;
+        PlayerCardData bottom = (row < 2) ? boardButtons[row + 1][col].getInfo() : null;
+        PlayerCardData left = (col > 0) ? boardButtons[row][col - 1].getInfo() : null;
+        PlayerCardData right = (col < 2) ? boardButtons[row][col + 1].getInfo() : null;
 
         return new CardAddedEvent(card, top, bottom, left, right);
     }
@@ -105,7 +100,7 @@ public class Board extends BackgroundPanel {
                 final int col = j;
                 var card = new CardComponent(null, e -> {
                     notifyPositionListeners(row, col);
-                });
+                }, 10);
                 boardButtons[i][j] = card;
                 add(card);
             }

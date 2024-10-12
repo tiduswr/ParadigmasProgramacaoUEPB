@@ -7,5 +7,4 @@ public class Main {
         var gameController = new GameController();
         gameController.createWindow();
     }
-    
 }

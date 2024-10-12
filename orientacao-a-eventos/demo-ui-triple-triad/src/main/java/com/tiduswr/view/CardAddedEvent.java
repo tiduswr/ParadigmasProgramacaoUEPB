@@ -1,5 +1,7 @@
 package com.tiduswr.view;
 
+import com.tiduswr.model.PlayerCardData;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,9 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CardAddedEvent {
-    private CardComponent card;
-    private CardComponent top;
-    private CardComponent bottom;
-    private CardComponent left;
-    private CardComponent right;
+    private PlayerCardData card;
+    private PlayerCardData top;
+    private PlayerCardData bottom;
+    private PlayerCardData left;
+    private PlayerCardData right;
 }

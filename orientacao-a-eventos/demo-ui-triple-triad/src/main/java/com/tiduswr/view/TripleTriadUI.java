@@ -6,7 +6,9 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -14,8 +16,7 @@ import javax.swing.JPanel;
 
 import com.tiduswr.model.CardData;
 import com.tiduswr.model.Player;
-import com.tiduswr.model.PlayerCardData;
-import com.tiduswr.model.SoundService;
+import com.tiduswr.model.SoundServices;
 
 import lombok.Getter;
 
@@ -25,19 +26,18 @@ public class TripleTriadUI extends JFrame {
     private Board board;
     private GameLog gameLog;
     private PlayerCards p1, p2;
-    private final int glW, glH, plW, plH;
+    private final int glW, glH, plW, plH, spW, spH;
     private final Dimension SCREEN_SIZE = new Dimension(800, 700);
-    private SoundService themeSoundService, selectionSoundService;
+    private final SoundServices soundServices;
 
-    public TripleTriadUI(List<CardData> cards, SoundService themeSoundServiceInjection, SoundService selectionSoundServiceInjection) throws IOException {
-        this.themeSoundService = themeSoundServiceInjection;
-        this.selectionSoundService = selectionSoundServiceInjection;
+    public TripleTriadUI(List<CardData> cards, SoundServices soundServices) throws IOException {
+        this.soundServices = soundServices;
 
         // Tocador de fitas :)
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                themeSoundService.close();
+                soundServices.getSoundService("main-theme").close();
             }
         });
 
@@ -45,82 +45,63 @@ public class TripleTriadUI extends JFrame {
         setTitle("Triple Triad");
         setSize(SCREEN_SIZE);
 
-        // Configuração do tamanho do Painel de cartas dos jogadores e do Log (precisa estar depois de setSize(...))
-        plW = (int) (getWidth() * 0.17);
-        plH = getHeight();
-        glW = getWidth();
-        glH = (int) (getHeight() * 0.14);
+        plW = (int) (getWidth() * 0.17); // Largura do painel de cartas
+        plH = getHeight(); // Altura do painel de cartas
+        glW = getWidth(); // Largura total do log
+        glH = (int) (getHeight() * 0.12); // Altura do log
+        spW = getWidth(); // Largura do Scopre Player
+        spH = (int) (getHeight() * 0.04); // Largura do Scopre Player
 
-        // Configurações de janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        var layout = new BorderLayout();
-        layout.setVgap(10);
-        layout.setHgap(10);
-        setLayout(layout);
+        setLayout(new BorderLayout()); // Espaçamento ajustado
 
         // Instancia do gamelog para mensagens
         gameLog = new GameLog();
+        gameLog.setPreferredSize(new Dimension(glW, glH));
+        gameLog.setBorder(BorderFactory.createTitledBorder("Log de Jogadas"));
 
         // Wrapper para o campo
         JPanel boardWrapper = new JPanel(new BorderLayout());
         board = new Board("/back.png", cards);
-        board.addCardAddedListener(e -> {
-            gameLog.addLogMessage("A carta '" + e.getCard().getInfo().getCardData().getName() + "' foi inserida!");
-        });
-        board.addPositionListener((row, col) -> {
-            gameLog.addLogMessage("A posição " + String.format("[%d, %d]", row, col) + " foi selecionada!");
-        });
-        // Exemplo de adição de efeito sonoro ao clicar
-        board.addPositionListener((row, col) -> {
-            selectionSoundService.play();
-        });
         boardWrapper.add(board, BorderLayout.CENTER);
+        boardWrapper.setBorder(BorderFactory.createTitledBorder("Campo"));
 
         // Pode ser visto outra forma de pegar esses dados
-        p1 = new PlayerCards(this, new Player("José", 5, cards.subList(0, 5), Color.decode("#08C2FF")), plW, plH);
-        p2 = new PlayerCards(this, new Player("Maria", 5, cards.subList(5, 10), Color.decode("#C96868")), plW, plH);
-        p2.setCardsActive(false); // Você pode inativar uma mão de um jogador assim
+        List<CardData> cardsP1 = new ArrayList<>();
+        List<CardData> cardsP2 = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < 5; i++) {
+            cardsP1.add(cards.get(random.nextInt(cards.size())));
+            cardsP2.add(cards.get(random.nextInt(cards.size())));
+        }
+        Player jose = new Player("José", cardsP1, Color.decode("#08C2FF"));
+        Player maria = new Player("Maria", cardsP2, Color.decode("#C96868"));
+        p1 = new PlayerCards(this, jose, plW, plH);
+        p2 = new PlayerCards(this, maria, plW, plH);
+        p2.setCardsActive(true); // Você pode inativar uma mão de um jogador assim
         p2.processAllPlayerCardData((indice, carta) -> {
-            carta.setFlipped(true); // Como você pode esconder cartas da mão do usuário
+            carta.setFlipped(indice%2==0); // Como você pode esconder cartas da mão do usuário
         });
 
-        // Só pra testes
-        exemploDeCartasNoCampo(cards, Color.decode("#fa6469"));
+        // Painel de Pontuação
+        JPanel scorePanel = new ScorePanel(p1.getPlayer(), p2.getPlayer());
+        scorePanel.setPreferredSize(new Dimension(spW, spH)); // Ajusta a altura do painel de pontuação
 
-        // log do jogo
-        gameLog.setPreferredSize(new Dimension(glW, glH));
-
-        // Adiciona os componentes ao layout
-        boardWrapper.setBorder(BorderFactory.createTitledBorder("Campo"));
-        gameLog.setBorder(BorderFactory.createTitledBorder("Log de Jogadas"));
-        add(boardWrapper, BorderLayout.CENTER);
+        // Painel central contendo o board e o game log
+        JPanel centerPanel = new JPanel(new BorderLayout(0,0));
+        centerPanel.add(scorePanel, BorderLayout.NORTH);
+        centerPanel.add(boardWrapper, BorderLayout.CENTER);
+        centerPanel.add(gameLog, BorderLayout.SOUTH);
+        add(centerPanel, BorderLayout.CENTER);
         add(p1, BorderLayout.WEST);
         add(p2, BorderLayout.EAST);
-        add(gameLog, BorderLayout.SOUTH);
-
-        // Criação do painel de pontuação
-        JPanel scorePanel = new ScorePanel(p1.getPlayer(), p2.getPlayer());
-        add(scorePanel, BorderLayout.NORTH); // Adiciona o painel de pontuação no topo
 
         // Configurações de janela
-        setLocationRelativeTo(null);
-        themeSoundService.playThenLoop("theme-loop.wav");
+        setLocationRelativeTo(null); // Centraliza a janela na tela
+        soundServices
+            .getSoundService("main-theme")
+            .playThenLoop("theme-loop.wav");
         setVisible(true);
-    }    
-
-    private void exemploDeCartasNoCampo(List<CardData> cards, Color color) {
-        final var cardData = new PlayerCardData(cards.get(0), p2.getPlayer(), false);
-        var cardComponent = new CardComponent(cardData, null, 10);
-        board.addCard(cardComponent, 2, 2);
-
-        final var cardData2 = new PlayerCardData(cards.get(109), p2.getPlayer(), false);
-        cardComponent = new CardComponent(cardData2, null, 10);
-        board.addCard(cardComponent, 1, 1);
-
-        final var cardData3 = new PlayerCardData(cards.get(80), p1.getPlayer(), false);
-        cardData3.setOwner(p1.getPlayer());
-        cardComponent = new CardComponent(cardData3, null, 10);
-        board.addCard(cardComponent, 0, 0);
     }
 }

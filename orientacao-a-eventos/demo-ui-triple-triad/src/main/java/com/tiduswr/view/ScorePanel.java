@@ -30,8 +30,8 @@ public class ScorePanel extends JPanel{
             p2.getPoints()
         ));
         scoreLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        scoreLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        setBorder(new EmptyBorder(15,0,0,0));
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        setBorder(new EmptyBorder(5,0,0,0));
         add(scoreLabel);
     }
 

@@ -27,22 +27,21 @@ public class PlayerCards extends JPanel {
     public PlayerCards(TripleTriadUI father, Player player, int width, int height) {
         this.player = player;
         selectedIndex = -1;
-        handSize = player.getCards().size() <= 5 ? player.getCards().size() : 5;
 
         setLayout(new GridLayout(5, 1));
         setPreferredSize(new Dimension(width, height));
-        setFocusable(true); // Permite que o painel receba foco
 
         for (int i = 0; i < handSize; i++) {
-            var cardData = player.getCards().get(i);
-            var playerCardData = new PlayerCardData(cardData, player, false);
+            var index = i;
+            var cardData = player.getCards().get(index);
+            var playerCardData = new PlayerCardData(cardData, player, 0, false);
             
             var cardComponent = new CardComponent(playerCardData, e -> {
-                if(!cardsActive)
+                if(!cardsActive || playerCardData.isFlipped())
                     return;
 
                 father.getGameLog().addLogMessage(String.format("A carta '%s' foi selecionada!", cardData.getName()));
-                father.getSelectionSoundService().play();
+                father.getSoundServices().getSoundService("selection").play();
                 selectedIndex = player.getCards().indexOf(cardData);
                 updateBorders();
             });
@@ -64,10 +63,13 @@ public class PlayerCards extends JPanel {
 
         //Exemplo de passar uma carta da mão para o campo
         father.getBoard().addPositionListener((row, col) -> {
-            if(selectedIndex != -1){
-                if(!father.getBoard().addCard(new CardComponent(getSelected().getInfo(), null, 10), row, col)){
+            var selected = getSelected();
+            if(selected != null){
+                if(!father.getBoard().addCard(selected, row, col)){       
+                    father.getSoundServices().getSoundService("error").play();             
                     father.getGameLog().addLogMessage(String.format("A posição [%d, %d] ja possui uma carta!", row, col));
                 }else{
+                    father.getSoundServices().getSoundService("card-placed").play();
                     removeSelected();
                 }
             }
@@ -87,27 +89,30 @@ public class PlayerCards extends JPanel {
         repaint();
     }
 
-    public CardComponent getSelected() {
+    public PlayerCardData getSelected() {
         if (selectedIndex != -1) {
-            return (CardComponent) getComponent(selectedIndex);
+            return ((CardComponent) getComponent(selectedIndex)).getInfo();
         }
         return null;
     }
 
-    public CardComponent removeSelected() {
-        if (selectedIndex != -1) {
-            CardComponent selectedCard = (CardComponent) getComponent(selectedIndex);
-            remove(selectedCard);
-            player.getCards().remove(selectedCard.getInfo().getCardData());
-            selectedIndex = -1;
-            handSize = player.getCards().size();
+    public boolean removeSelected() {
+        var selected = getSelected();
 
-            revalidate();
-            repaint();
-            return selectedCard;
-        }
-        return null;
-    }
+        if(selected == null) 
+            return false;
+
+        CardComponent selectedCard = (CardComponent) getComponent(selectedIndex);
+        player.getCards().removeIf(card -> card.equals(selectedCard.getInfo().getCardData()));
+        selectedIndex = -1;
+        handSize--;
+
+        remove(selectedCard);
+        revalidate();
+        repaint();
+
+        return true;
+    }    
 
     private List<PlayerCardData> getAllPlayerCardData() {
         List<PlayerCardData> cardDataList = new ArrayList<>();

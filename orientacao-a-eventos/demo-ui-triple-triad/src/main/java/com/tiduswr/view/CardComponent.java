@@ -154,8 +154,8 @@ public class CardComponent extends JButton {
 
         String upValue = info.getCardData().getUp() == 10 ? "A" : String.valueOf(info.getCardData().getUp());
         String downValue = info.getCardData().getDown() == 10 ? "A" : String.valueOf(info.getCardData().getDown());
-        String leftValue = info.getCardData().getLeft() == 10 ? "A" : String.valueOf(info.getCardData().getRight());
-        String rightValue = info.getCardData().getRight() == 10 ? "A" : String.valueOf(info.getCardData().getLeft());
+        String leftValue = info.getCardData().getLeft() == 10 ? "A" : String.valueOf(info.getCardData().getLeft());
+        String rightValue = info.getCardData().getRight() == 10 ? "A" : String.valueOf(info.getCardData().getRight());
 
         drawValue(g2d, String.valueOf(upValue), 24 + OFFSET, 23 + OFFSET);
         drawValue(g2d, String.valueOf(downValue), 24 + OFFSET, 46 + OFFSET);
@@ -168,13 +168,13 @@ public class CardComponent extends JButton {
     private void drawType(Graphics2D g2d) {
         var icon = info.getCardData().getTypeIcon();
         var y = 10 + OFFSET;
-        var x = getWidth() - (icon.getWidth() + 9 + OFFSET);
+        var x = getWidth() - (icon.getWidth() + 15 + OFFSET);
 
         g2d.drawImage(info.getCardData().getTypeIcon(), x, y, 25, 25, this);
     }
 
     private void drawValue(Graphics2D g2d, String value, int x, int y) {
-        g2d.setFont(new Font("sans", Font.BOLD, 20));
+        g2d.setFont(new Font("sans", Font.BOLD, 18));
         g2d.setColor(Color.WHITE); // Cor da borda
         float outlineThickness = 1.5f;
 
